@@ -9,11 +9,9 @@ def first(line, w2d):
     index = len(line)
     digit = None
     for w, d in w2d.items():
-        #print(f"w: {w}, d: {d}")
         try:
             found = line.index(w)
             if found < index:
-                #print(f"{w} found at {found}")
                 index = found
                 digit = d
         except:
