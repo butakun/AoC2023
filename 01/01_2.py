@@ -1,100 +1,43 @@
-import numpy as np
+words = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+word2digit = {w: d for w, d in zip(words, range(1, 10))}
+digit2word = {str(d): w for w, d in word2digit.items()}
 
-words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-word2digit = { w: str(i) for i, w in enumerate(words) }
+word2digit_r = {w[::-1]: d for w, d in word2digit.items()}
 
 
-def first(line):
-    digits = [ i for i, c in enumerate(line) if c.isdigit() ]
-    if digits:
-        first_digit_index = digits[0]
-    else:
-        first_digit_index = None
-
-    min_index = len(line) + 1
-    min_word = None
-    for w in word2digit:
+def first(line, w2d):
+    index = len(line)
+    digit = None
+    for w, d in w2d.items():
         try:
-            i = line.index(w)
+            found = line.index(w)
+            if found < index:
+                index = found
+                digit = d
         except:
             continue
-        if i < min_index:
-            min_index = i
-            min_word = w
-    first_digit = None
-    if min_word is None:
-        first_digit = int(line[first_digit_index])
-    else:
-        if min_index < first_digit_index:
-            first_digit = word2digit[min_word]
-        else:
-            first_digit = int(line[first_digit_index])
-    return first_digit
 
-
-def last(line):
-    digits = [ i for i, c in enumerate(line) if c.isdigit() ]
-    if digits:
-        last_digit_index = digits[-1]
-    else:
-        last_digit_index = None
-
-    max_index = -1
-    max_word = None
-    for sublen in range(1, len(line)):
-        sub = line[-sublen:]
-        for w in word2digit:
-            if sub.startswith(w):
-                max_index = len(line) - sublen
-                max_word = w
-                break
-
-        if max_word:
-            break
-
-    """
-    print("last_digit_index = ", last_digit_index)
-    print("max index = ", max_index)
-    print("max word = ", max_word)
-    """
-    last_digit = None
-    if max_word is None:
-        last_digit = int(line[last_digit_index])
-    else:
-        if max_index > last_digit_index:
-            last_digit = word2digit[max_word]
-        else:
-            last_digit = int(line[last_digit_index])
-    return last_digit
+    return digit
 
 
 def main(filename):
-    if False:
-        line = "5fivezgfgcxbf3five"
-        line = "sixseven9jgpnxqhq"
-        line = "3oneeighttwo"
-        f = first(line)
-        l = last(line)
-        value = int(f"{f}{l}")
-        print(line, f, l, value)
-        return
-
     lines = [ l.strip() for l in open(filename) ]
-
-    print(word2digit)
 
     values = []
     for line in lines:
-        f = first(line)
-        l = last(line)
+        words = line
+        for d, w in digit2word.items():
+            words = words.replace(d, w)
+        words_r = words[::-1]
+
+        f = first(words, word2digit)
+        l = first(words_r, word2digit_r)
         value = int(f"{f}{l}")
-        print(line, f, l, value)
-        
+        print(line, words, f, l, value)
         values.append(value)
 
-    values = np.array(values)
     print(values)
-    print(values.sum())
+    print(sum(values))
 
 
 if __name__ == "__main__":
