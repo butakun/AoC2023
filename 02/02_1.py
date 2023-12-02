@@ -5,12 +5,12 @@ def read(filename):
         sets = line.split(":")[1].split(";")
         game = []
         for sett in sets:
-            tokens = sett.split()
+            cubes = sett.split(",")
             a_set = {}
-            for i in range(int(len(tokens) / 2)):
-                n = int(tokens[2 * i])
-                color = tokens[2 * i + 1].strip(",")
-                a_set[color] = n
+            for cube in cubes:
+                n, color = cube.split()
+                color = color.strip(",")
+                a_set[color] = int(n)
             game.append(a_set)
         games[game_id] = game
     return games
