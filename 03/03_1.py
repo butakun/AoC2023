@@ -1,13 +1,3 @@
-import numpy as np
-
-
-def read2(filename):
-    lines = ["." + l.strip() + "." for l in open(filename)]
-    lines.insert(0, "." * len(lines[0]))
-    lines.append("." * len(lines[0]))
-    return lines
-
-
 def read(filename):
     numbers = []
     symbols = []
