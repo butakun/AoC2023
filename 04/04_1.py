@@ -1,15 +1,15 @@
-import numpy as np
+import re
 
 
 def read(filename):
+    spaces = re.compile(r"\s+")
     cards = []
     for line in open(filename):
         line = line.strip()
+        line = re.sub(spaces, " ", line)
         winners, numbers = line.split(": ")[1].split(" | ")
-        winners = [x for x in winners.strip().split(" ") if x]
-        numbers = [x for x in numbers.strip().split(" ") if x]
-        winners = [int(x) for x in winners]
-        numbers = [int(x) for x in numbers]
+        winners = [int(x) for x in winners.strip().split(" ")]
+        numbers = [int(x) for x in numbers.strip().split(" ")]
         cards.append((winners, numbers))
     return cards
 

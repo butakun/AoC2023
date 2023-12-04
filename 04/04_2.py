@@ -1,18 +1,17 @@
-import numpy as np
+import re
 
 
 def read(filename):
+    spaces = re.compile(r"\s+")
     cards = []
     for line in open(filename):
         line = line.strip()
+        line = re.sub(spaces, " ", line)
         card_number, contents = line.split(": ")
-        card_number = [x for x in card_number.strip().split(" ") if x][1]
-        card_number = int(card_number)
+        card_number = int(card_number.split()[1])
         winners, numbers = contents.split(" | ")
-        winners = [x for x in winners.strip().split(" ") if x]
-        numbers = [x for x in numbers.strip().split(" ") if x]
-        winners = [int(x) for x in winners]
-        numbers = [int(x) for x in numbers]
+        winners = [int(x) for x in winners.strip().split(" ")]
+        numbers = [int(x) for x in numbers.strip().split(" ")]
         cards.append((card_number, winners, numbers))
     return cards
 
