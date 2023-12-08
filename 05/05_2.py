@@ -93,14 +93,14 @@ def test1():
 def follow_a_range(seed_range, steps):
     ranges = [seed_range]
     for i, step in enumerate(steps):
-        print(f"Step {i}: ranges = {ranges}, cutters = {step}")
+        #print(f"Step {i}: ranges = {ranges}, cutters = {step}")
 
         next_ranges = []
         for seed_range in ranges:
             remnants = cut_a_range_with_cutters(seed_range, step)
             next_ranges.extend(remnants)
 
-        print(f"Step {i} DONE: next_ranges = {next_ranges}")
+        #print(f"Step {i} DONE: next_ranges = {next_ranges}")
         ranges = next_ranges
     return ranges
 
