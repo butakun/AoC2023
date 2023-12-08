@@ -1,6 +1,3 @@
-from functools import cmp_to_key
-
-
 def read(filename):
     f = open(filename)
     inst = f.readline().strip()
@@ -17,22 +14,6 @@ def read(filename):
         network[node] = (left, right)
 
     return inst, network
-
-
-def traverse_(node, index, inst, network):
-    print(f"node = {node}")
-    if node == "ZZZ":
-        return index
-
-    i = index % len(inst)
-    which = inst[i]
-
-    left, right = network[node]
-    print(f"  -> {left} <-> {right}")
-    if which == "L":
-        return traverse(left, index+1, inst, network)
-    elif which == "R":
-        return traverse(right, index+1, inst, network)
 
 
 def traverse(node, index, inst, network):
