@@ -164,8 +164,10 @@ def main(filename):
     area = np.sum(small_pond == "-")
     print(area)
 
-    with open("pont.txt", "w") as f:
+    with open("small_pond.txt", "w") as f:
         condensed_print(small_pond, f)
+    with open("big_pond.txt", "w") as f:
+        condensed_print(big_pond, f)
 
 if __name__ == "__main__":
     import argparse
