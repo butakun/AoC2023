@@ -81,24 +81,6 @@ def get_loop(network, i, j):
     return loop
 
 
-def walk(grid, network, i, j):
-    D = {}
-
-    nodes = [(i, j)]
-    D[(i, j)] = 0
-    while nodes:
-        node = nodes.pop()
-        neighbors = network[node]
-        D0 = D[node]
-        for nei in neighbors:
-            if nei in D:
-                continue
-            D[nei] = D0 + 1
-            nodes.append(nei)
-
-    return D
-
-
 def main(filename):
     grid = read(filename)
     print(grid)
