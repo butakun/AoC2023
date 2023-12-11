@@ -41,8 +41,6 @@ def condensed_print(g, file=sys.stdout):
 
 def main(filename):
     grid = read(filename)
-    condensed_print(grid)
-
     grid = expand(grid)
 
     ii, jj = np.where(grid == "#")

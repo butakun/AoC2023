@@ -46,7 +46,6 @@ def condensed_print(g, file=sys.stdout):
 
 def main(filename):
     grid = read(filename)
-    condensed_print(grid)
 
     rows, cols = gaps(grid)
     print(rows, cols)
