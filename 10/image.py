@@ -4,7 +4,7 @@ import cv2
 from pathlib import Path
 
 
-def main(filename, scale):
+def main(filename, marker, scale):
     with open(filename) as f:
         pond = [list(l.strip()) for l in f]
         pond = np.array(pond)
@@ -15,7 +15,7 @@ def main(filename, scale):
             p = pond[i, j]
             if p == "P":
                 frame[i, j] = 255
-            elif p == "-":
+            elif p == marker:
                 frame[i, j] = 127
 
     dsize = int(frame.shape[1] * scale), int(frame.shape[0] * scale)
@@ -27,6 +27,7 @@ def main(filename, scale):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", nargs="?", default="big_pond.txt")
+    parser.add_argument("--marker", default="-")
     parser.add_argument("--scale", type=float, default=2.0)
     args = parser.parse_args()
-    main(args.filename, args.scale)
+    main(args.filename, args.marker, args.scale)

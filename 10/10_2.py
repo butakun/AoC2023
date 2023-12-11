@@ -115,19 +115,27 @@ def flood(grid, network, loop):
     assert (start1 is not None) and (start2 is not None)
 
     # (i, j) is pond-coord below
-    nodes = [start1]
-    marker = pond[start1]
-    while nodes:
-        node = nodes.pop()
-        i, j = node
-        for ii in range(i-1, i+2):
-            for jj in range(j-1, j+2):
-                p = pond[ii, jj]
-                if p != "P" and p != marker:
-                    pond[ii, jj] = marker
-                    nodes.append((ii, jj))
+    outside_marker = None
+    IDIM, JDIM = pond.shape
+    for start in [start1, start2]:
+        nodes = [start]
+        marker = pond[start]
+        while nodes:
+            node = nodes.pop()
+            i, j = node
+            imin, imax = max(0, i-1), min(IDIM-1, i+1)
+            jmin, jmax = max(0, j-1), min(JDIM-1, j+1)
+            for ii in range(imin, imax+1):
+                for jj in range(jmin, jmax+1):
+                    p = pond[ii, jj]
+                    if p != "P" and p != marker:
+                        pond[ii, jj] = marker
+                        nodes.append((ii, jj))
+                        if ii == 0 or jj == 0 or ii == IDIM-1 or jj == JDIM-1:
+                            outside_marker = marker
 
-    return pond
+    inside_marker = "-" if outside_marker == "+" else "+"
+    return pond, inside_marker, outside_marker
 
 
 def condensed_print(g, file=sys.stdout):
@@ -155,13 +163,14 @@ def main(filename):
     loop = get_loop(network, *start)
     print(loop)
 
-    big_pond = flood(grid, network, loop)
+    big_pond, inside, outside = flood(grid, network, loop)
     #condensed_print(big_pond)
 
     small_pond = big_pond[1::2, 1::2]
     condensed_print(small_pond)
+    print(f"inside = {inside}, outside = {outside}")
 
-    area = np.sum(small_pond == "-")
+    area = np.sum(small_pond == inside)
     print(area)
 
     with open("small_pond.txt", "w") as f:
