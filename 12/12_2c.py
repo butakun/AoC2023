@@ -78,9 +78,9 @@ def look(matching, pattern, strips):
     return count
 
 
-def main(filename):
+def main(filename, multiple):
     records = read(filename)
-    records = multiply(records, 5)
+    records = multiply(records, multiple)
 
     count = 0
     for pattern, strips in records:
@@ -94,5 +94,6 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("input", nargs="?", default="input.txt")
+    parser.add_argument("--multiple", nargs="?", type=int, default=5)
     args = parser.parse_args()
-    main(args.input)
+    main(args.input, args.multiple)
