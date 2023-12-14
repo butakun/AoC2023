@@ -11,23 +11,19 @@ def read(filename):
 def tilt(grid, direction):
     idim, jdim = grid.shape
     if direction == "N":
-        irange = range(idim)
+        irange = lambda : range(idim)
+        jrange = lambda : range(jdim)
     elif direction == "S":
-        irange = reversed(range(idim))
+        irange = lambda : reversed(range(idim))
+        jrange = lambda : range(jdim)
     elif direction == "W":
-        irange = range(idim)
+        irange = lambda : range(idim)
+        jrange = lambda : range(jdim)
     elif direction == "E":
-        irange = range(idim)
-    for i in irange:
-        if direction == "N":
-            jrange = range(jdim)
-        elif direction == "S":
-            jrange = range(jdim)
-        elif direction == "W":
-            jrange = range(jdim)
-        elif direction == "E":
-            jrange = reversed(range(jdim))
-        for j in jrange:
+        irange = lambda : range(idim)
+        jrange = lambda : reversed(range(jdim))
+    for i in irange():
+        for j in jrange():
             if grid[i, j] != "O":
                 continue
             i0, j0 = None, None
@@ -67,18 +63,40 @@ def main(filename):
 
     idim, jdim = grid.shape
 
-    for cycle in range(1000):
+    patterns = []
+
+    total_cycles = 1000000000
+    repeats = 0
+    for cycle in range(total_cycles):
         tilt(grid, "N")
         tilt(grid, "W")
         tilt(grid, "S")
         tilt(grid, "E")
+
+        for i_past in reversed(range(cycle)):
+            grid_past = patterns[i_past][0]
+            if np.all(grid == grid_past):
+                logging.warning(f"back to the configuration at {i_past + 1} at cycle {cycle + 1}")
+                i_periodic_start = i_past
+                i_period = cycle - i_past
+                repeats += 1
+                break
+        if repeats > 0:
+            break
 
         weight = 0
         ii, jj = np.where(grid == "O")
         for i, j in zip(ii, jj):
             w = idim - i
             weight += w
-        logging.info(f"{cycle} {weight}")
+        patterns.append([grid.copy(), weight])
+        logging.info(f"{cycle + 1} {weight}")
+
+    print(f"periodicity starts at {i_periodic_start + 1} with the period of {i_period}")
+
+    i_weight = (total_cycles - 1 - i_periodic_start) % i_period + i_periodic_start
+    weight = patterns[i_weight][1]
+    print(f"weight = {weight}")
 
 
 if __name__ == "__main__":
