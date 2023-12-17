@@ -1,7 +1,8 @@
 import logging
 logging.basicConfig(level=logging.DEBUG)
 import numpy as np
-from dijkstra import dijkstra
+from dijkstra import dijkstra, a_star
+from visual import SearchVisualLogger
 
 
 def read(filename):
@@ -61,12 +62,19 @@ class World:
         nei = [ (v, self.grid[v[0], v[1]]) for v in vv ]
         return nei
 
+    def HFunc(self, u):
+        idim, jdim = self.grid.shape
+        i, j = u[0], u[1]
+        wi = idim - i - 1
+        wj = jdim - j - 1
+        return wi + wj
+
     def is_goal(self, u):
         idim, jdim = self.grid.shape
         return u[3] >= 4 and u[0] == idim - 1 and u[1] == jdim - 1
 
 
-def main(filename):
+def main(filename, method, visualize):
     grid = read(filename)
     print(grid)
 
@@ -76,7 +84,16 @@ def main(filename):
     G = World(grid)
     start = (0, 0, None, 0)
 
-    path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1)
+    if visualize:
+        vis_logger = SearchVisualLogger(open("vis.log", "w"))
+        vis_logger.dimensions(idim, jdim)
+    else:
+        vis_logger = None
+
+    if method == "dijkstra":
+        path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1, vis_logger=vis_logger)
+    elif method == "astar":
+        path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1, vis_logger=None)
     print(path)
     print(d)
 
@@ -85,5 +102,7 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("input", nargs="?", default="input.txt")
+    parser.add_argument("--method", default="dijkstra")
+    parser.add_argument("--vis", action="store_true")
     args = parser.parse_args()
-    main(args.input)
+    main(args.input, args.method, args.vis)

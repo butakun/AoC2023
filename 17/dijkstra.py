@@ -36,7 +36,7 @@ class PriorityQueue(object):
         return len(self._pq)
 
 
-def dijkstra(G, src, f_is_goal, debug_freq=-1):
+def dijkstra(G, src, f_is_goal, debug_freq=-1, vis_logger=None):
 
     D = defaultdict(lambda:math.inf)
     D[src] = 0
@@ -58,10 +58,14 @@ def dijkstra(G, src, f_is_goal, debug_freq=-1):
         if debug_freq > 0:
             if iter % debug_freq == 0:
                 logging.debug(f"iter {iter}: u = {u}, D[u] = {D[u]}, len(pq) = {len(pq)}")
+        if vis_logger:
+            vis_logger.inspecting(iter, u)
 
         if f_is_goal(u):
             logging.debug(f"reached dest {u}")
             dest = u
+            if vis_logger:
+                vis_logger.goal_reached(iter, dest, came_from, D[dest])
             break
         for v in G[u]:
             if isinstance(v, tuple):
@@ -73,6 +77,8 @@ def dijkstra(G, src, f_is_goal, debug_freq=-1):
                 D[v] = dist_v
                 came_from[v] = u
                 pq.push(v, priority=dist_v)
+                if vis_logger:
+                    vis_logger.found_better(iter, v, came_from, dist_v)
 
     assert dest is not None
     path = [dest]
@@ -87,56 +93,7 @@ def dijkstra(G, src, f_is_goal, debug_freq=-1):
     return path, D[dest]
 
 
-def dijkstra2(G, src, f_is_dest, debug_freq=-1):
-
-    D = defaultdict(lambda:math.inf)
-    D[src] = 0
-    came_from = {src: None}
-
-    pq = PriorityQueue()
-    pq.push(src, priority=D[src])
-
-    Dmin = 0
-    dest = None
-    iter = 0
-    while True:
-        try:
-            u = pq.pop()
-        except IndexError:
-            break
-        iter += 1
-        assert u is not None
-
-        if debug_freq > 0:
-            if iter % debug_freq == 0:
-                if dest:
-                    print(f"iter {iter}: D[u] = {D[u]}, Dmin = {Dmin}")
-
-        for v, weight in G.next_actions(u, D[u], Dmin):
-            dist_v = D[u] + weight
-            if dist_v < D[v]:
-                if dist_v < Dmin:
-                    Dmin = dist_v
-                    dest = v
-                D[v] = dist_v
-                came_from[v] = u
-                pq.push(v, priority=dist_v)
-
-    if not dest:
-        return [], None
-
-    path = [dest]
-    while True:
-        prev = came_from[path[-1]]
-        if prev is None:
-            break
-        path.append(prev)
-
-    path.reverse()
-    return path, D[dest]
-
-
-def a_star2(G, src, debug_freq=-1):
+def a_star(G, src, f_is_goal, debug_freq=-1):
     pq = PriorityQueue()
     came_from = {src: None}
 
@@ -146,6 +103,7 @@ def a_star2(G, src, debug_freq=-1):
     gScore[src] = 0
     fScore[src] = G.HFunc(src)
 
+    dest = None
     g_best = 0
     pq.push(src, priority=fScore[src])
     iter = 0
@@ -157,16 +115,20 @@ def a_star2(G, src, debug_freq=-1):
         iter += 1
 
         if debug_freq > 0 and iter % debug_freq == 0:
-            print(f"iter {iter}: {g_best}, gScore[u] = {gScore[u]}, fScore[u] = {fScore[u]}")
+            logging.debug(f"iter {iter}: {g_best}, gScore[u] = {gScore[u]}, fScore[u] = {fScore[u]}")
 
-        for v in G.next_actions(u):
+        if f_is_goal(u):
+            logging.debug(f"reached dest {u}")
+            dest = u
+            break
+
+        for v in G[u]:
             if isinstance(v, tuple):
                 v, weight = v[0], v[1]
             else:
                 weight = 1
             g_temp = gScore[u] + weight
             if g_temp < g_best:
-                best = v
                 g_best = g_temp
             if g_temp < gScore[v]:
                 f_temp = g_temp + G.HFunc(v)
@@ -175,7 +137,8 @@ def a_star2(G, src, debug_freq=-1):
                 came_from[v] = u
                 pq.push(v, priority=f_temp)
 
-    path = [best]
+    assert dest is not None
+    path = [dest]
     while True:
         prev = came_from[path[-1]]
         if prev is None:
@@ -183,7 +146,7 @@ def a_star2(G, src, debug_freq=-1):
         path.append(prev)
 
     path.reverse()
-    return path, gScore[best]
+    return path, gScore[dest]
 
 
 def connected_component(G, start, debug=0):
