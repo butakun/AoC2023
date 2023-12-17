@@ -57,7 +57,7 @@ class World:
         nei = [ (v, self.grid[v[0], v[1]]) for v in vv ]
         return nei
 
-    def is_dest(self, u):
+    def is_goal(self, u):
         idim, jdim = self.grid.shape
         return u[0] == idim - 1 and u[1] == jdim - 1
 
@@ -72,7 +72,7 @@ def main(filename):
     G = World(grid)
     start = (0, 0, None, 0)
 
-    path, d = dijkstra(G, start, debug_freq=1)
+    path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1)
     print(path)
     print(d)
 

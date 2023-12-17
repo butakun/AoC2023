@@ -36,7 +36,7 @@ class PriorityQueue(object):
         return len(self._pq)
 
 
-def dijkstra(G, src, debug_freq=-1):
+def dijkstra(G, src, f_is_goal, debug_freq=-1):
 
     D = defaultdict(lambda:math.inf)
     D[src] = 0
@@ -59,7 +59,7 @@ def dijkstra(G, src, debug_freq=-1):
             if iter % debug_freq == 0:
                 logging.debug(f"iter {iter}: u = {u}, D[u] = {D[u]}, len(pq) = {len(pq)}")
 
-        if G.is_dest(u):
+        if f_is_goal(u):
             logging.debug(f"reached dest {u}")
             dest = u
             break
