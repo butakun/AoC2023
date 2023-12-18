@@ -34,7 +34,7 @@ def compressed_print(x):
         print(buf)
 
 
-def main(filename, method):
+def main(filename):
     plan = read(filename)
     plan = decipher(plan)
     print(plan)
@@ -151,6 +151,5 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("input", nargs="?", default="input.txt")
-    parser.add_argument("--method", default="dijkstra")
     args = parser.parse_args()
-    main(args.input, args.method)
+    main(args.input)
