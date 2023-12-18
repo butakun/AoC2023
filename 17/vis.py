@@ -27,7 +27,7 @@ def main(log_filename):
         if istep_last is None:
             istep_last = istep
         if istep != istep_last and bg is not None:
-            if istep % 1000 == 0:
+            if istep % 3000 == 0:
                 print(istep)
                 frame = generate_frame(bg, best)
                 frames.append(frame)
@@ -43,7 +43,7 @@ def main(log_filename):
             i, j, w = int(tokens[2]), int(tokens[3]), int(tokens[4])
             assert w >= 0 and w < 10
             xi = (9 - w) / 9
-            pixel = (1.0 - xi) * 127 + xi * 255
+            pixel = (1.0 - xi) * 60 + xi * 180
             bg[i, j] = pixel
         elif typ == "BETTER":
             i, j, d = int(tokens[2]), int(tokens[3]), int(tokens[4])
