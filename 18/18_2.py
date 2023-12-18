@@ -28,56 +28,6 @@ def decipher(plan):
     return deciphered
 
 
-def left_right(ij1, ij2, imin, imax, jmin, jmax):
-    # trench contained in left
-    i1, j1 = ij1
-    i2, j2 = ij2
-    if i1 == i2:
-        if j1 < j2:
-            # 1---->2
-            left  = ((imin, j1), (i1, j2))
-            right = ((i1+1, j1), (imax, j2))
-        else:
-            # 2<----1
-            left  = ((i1, j2), (imax, j1))
-            right = ((imin, j2), (i1-1, j1))
-    elif j1 == j2:
-        if i1 < i2:
-            # 1
-            # v
-            # 2
-            left  = ((i1, j1+1), (i2, jmax))
-            right = ((i1, jmin), (i2, j1))
-        else:
-            # 2
-            # ^
-            # 1
-            left  = ((i2, jmin), (i1, j1))
-            right = ((i2, j1+1), (i2, jmax))
-    else:
-        raise ValueError
-
-    return left, right
-
-
-def intersect_1d(r1, r2):
-    s1 = max(r1[0], r2[0])
-    s2 = min(r1[1], r2[1])
-    if s1 < s2:
-        return s1, s2
-    else:
-        return None, None
-
-
-def intersect_2d(a, b):
-    i1, i2 = intersect_1d((a[0][0], a[1][0]), (b[0][0], b[1][0]))
-    j1, j2 = intersect_1d((a[0][1], a[1][1]), (b[0][1], b[1][1]))
-    if i1 is None or j1 is None:
-        return None
-    else:
-        return ((i1, j1), (i2, j2))
-
-
 def compressed_print(x):
     for row in x:
         buf = "".join([f"{int(v)}" for v in row])
@@ -92,7 +42,6 @@ def main(filename, method):
     trench = []
     i, j = 0, 0
     i_knots, j_knots = {i}, {j}
-    imin, imax, jmin, jmax = i, i, j, j
     for inst in plan:
         direction, blocks = inst[0], inst[1]
         if direction == "U":
@@ -116,20 +65,18 @@ def main(filename, method):
         j_knots.add(j2)
         print(f"adding knots {i2}, {j2}")
 
-        imin = min(i2, imin)
-        jmin = min(j2, jmin)
-        imax = max(i2, imax)
-        jmax = max(j2, jmax)
-
         i, j = i2, j2
-
-    print(imin, imax, jmin, jmax)
-    idim = imax-imin+1
-    jdim = jmax-jmin+1
 
     i_knots = sorted(i_knots)
     j_knots = sorted(j_knots)
     print(i_knots, j_knots)
+
+    imin, imax = min(i_knots), max(i_knots)
+    jmin, jmax = min(j_knots), max(j_knots)
+
+    print(imin, imax, jmin, jmax)
+    idim = imax-imin+1
+    jdim = jmax-jmin+1
 
     gidim = len(i_knots)
     gjdim = len(j_knots)
@@ -162,8 +109,6 @@ def main(filename, method):
         else:
             raise ValueError
 
-    print("END")
-    #print(cells)
     compressed_print((cells != 0))
     print(np.unique(cells))
 
