@@ -11,7 +11,7 @@ def read(filename):
 
 def main(filename, method):
     plan = read(filename)
-    print(plan)
+    #print(plan)
 
     holes = set()
     i, j = 0, 0
@@ -39,25 +39,31 @@ def main(filename, method):
 
     print(len(holes))
 
-    start = (-146, 147)
-    #start = (1, 1)
+    # find an interior point
+    start = None
+    for i, j in holes:
+        if (i, j-1) not in holes and (i, j+1) not in holes:
+            outside = True
+            for jm in range(j):
+                if (i, jm) in holes:
+                    outside = False
+                    break
+            if outside:
+                start = (i, j+1)
+                break
+
+    assert start is not None
+    print("interior point = ", start)
+
     nodes = [start]
     lag = {start}
     while nodes:
         node = nodes.pop(0)
         i, j = node
-        print(f"node = {i}, {j}")
         for nei in [(i-1, j), (i+1, j), (i, j-1), (i, j+1)]:
-            print(f"nei = {nei}, {nei not in holes}, {nei not in lag}")
             if (nei not in holes) and (nei not in lag):
-                print(f"adding {nei}")
                 lag.add(nei)
                 nodes.append(nei)
-            else:
-                print(f"skpping {nei}")
-
-    print(len(lag))
-    print(len(holes) + len(lag))
 
     for i in range(imin, imax + 1):
         buf = ""
@@ -69,6 +75,9 @@ def main(filename, method):
             else:
                 buf += "."
         print(buf)
+
+    print(len(lag))
+    print(len(holes) + len(lag))
 
 
 if __name__ == "__main__":
