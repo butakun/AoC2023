@@ -85,15 +85,15 @@ def main(filename, method, visualize):
     start = (0, 0, None, 0)
 
     if visualize:
-        vis_logger = SearchVisualLogger(open("vis.log", "w"))
+        vis_logger = SearchVisualLogger(open("vis.log", "w"), grid)
         vis_logger.dimensions(idim, jdim)
     else:
         vis_logger = None
 
     if method == "dijkstra":
-        path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1, vis_logger=vis_logger)
+        path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1000, vis_logger=vis_logger)
     elif method == "astar":
-        path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1, vis_logger=None)
+        path, d = dijkstra(G, start, lambda u: G.is_goal(u), debug_freq=1000, vis_logger=vis_logger)
     print(path)
     print(d)
 

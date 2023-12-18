@@ -1,12 +1,14 @@
 class SearchVisualLogger:
-    def __init__(self, f):
+    def __init__(self, f, grid):
         self.f = f
+        self.grid = grid
     
     def dimensions(self, idim, jdim):
         print(f"0,DIMENSIONS,{idim},{jdim}", file=self.f)
 
     def inspecting(self, i, u):
-        print(f"{i},INSPECT,{u[0]},{u[1]}", file=self.f)
+        w = self.grid[u[0], u[1]]
+        print(f"{i},INSPECT,{u[0]},{u[1]},{w}", file=self.f)
 
     def goal_reached(self, i, u, came_from, d):
         self.found_better(i, u, came_from, d)

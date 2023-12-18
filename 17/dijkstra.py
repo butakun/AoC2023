@@ -93,7 +93,7 @@ def dijkstra(G, src, f_is_goal, debug_freq=-1, vis_logger=None):
     return path, D[dest]
 
 
-def a_star(G, src, f_is_goal, debug_freq=-1):
+def a_star(G, src, f_is_goal, debug_freq=-1, vis_logger=None):
     pq = PriorityQueue()
     came_from = {src: None}
 
@@ -116,10 +116,14 @@ def a_star(G, src, f_is_goal, debug_freq=-1):
 
         if debug_freq > 0 and iter % debug_freq == 0:
             logging.debug(f"iter {iter}: {g_best}, gScore[u] = {gScore[u]}, fScore[u] = {fScore[u]}")
+        if vis_logger:
+            vis_logger.inspecting(iter, u)
 
         if f_is_goal(u):
             logging.debug(f"reached dest {u}")
             dest = u
+            if vis_logger:
+                vis_logger.goal_reached(iter, dest, came_from, gScore[dest])
             break
 
         for v in G[u]:
@@ -136,6 +140,8 @@ def a_star(G, src, f_is_goal, debug_freq=-1):
                 fScore[v] = f_temp
                 came_from[v] = u
                 pq.push(v, priority=f_temp)
+                if vis_logger:
+                    vis_logger.found_better(iter, v, came_from, g_temp)
 
     assert dest is not None
     path = [dest]

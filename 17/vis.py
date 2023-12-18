@@ -40,8 +40,11 @@ def main(log_filename):
             jdim = int(tokens[3])
             bg = np.zeros((idim, jdim), dtype=np.uint8)
         elif typ == "INSPECT":
-            i, j = int(tokens[2]), int(tokens[3])
-            bg[i, j] = 127
+            i, j, w = int(tokens[2]), int(tokens[3]), int(tokens[4])
+            assert w >= 0 and w < 10
+            xi = (9 - w) / 9
+            pixel = (1.0 - xi) * 127 + xi * 255
+            bg[i, j] = pixel
         elif typ == "BETTER":
             i, j, d = int(tokens[2]), int(tokens[3]), int(tokens[4])
             p = tokens[5].split(" ")
