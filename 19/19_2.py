@@ -1,6 +1,5 @@
 import logging
 logging.basicConfig(level=logging.INFO)
-import numpy as np
 from copy import deepcopy
 
 
@@ -106,7 +105,6 @@ def accepts(entry, ranges_start, workflows):
 
 def main(filename):
     workflows = read(filename)
-    print(workflows)
 
     start = {"x": [1, 4000], "m": [1, 4000], "a": [1, 4000], "s": [1, 4000]}
     accepted = accepts("in", start, workflows)
