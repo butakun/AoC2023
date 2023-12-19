@@ -1,21 +1,5 @@
 import logging
 logging.basicConfig(level=logging.INFO)
-import numpy as np
-
-
-class Func:
-    def __init__(self, a, p, v):
-        self.attr = a
-        self.pred = p
-        self.value = v
-    def __call__(self, x):
-        logging.debug(f"FUNC: {self.attr} {self.pred} {self.value}? {x[self.attr]}")
-        if self.pred == "<":
-            return x[self.attr] < self.value
-        elif self.pred == ">":
-            return x[self.attr] > self.value
-        else:
-            assert False
 
 
 def read(filename):
@@ -35,15 +19,12 @@ def read(filename):
                 pred = tokens[0][1]
                 value = int(tokens[0][2:])
                 dest = tokens[1]
-                #rule = {"attr": attr, "pred": pred, "value": value, "dest": dest}
                 if pred == "<":
                     logging.debug(f"  pred = {pred}, value = '{value}'")
-                    #func = lambda p: p[attr] < value
-                    func = Func(attr, pred, value)
+                    func = lambda p, a=attr, v=value: p[a] < v
                 elif pred == ">":
                     logging.debug(f"  pred = {pred}, value = '{value}'")
-                    #func = lambda p: p[attr] > value
-                    func = Func(attr, pred, value)
+                    func = lambda p, a=attr, v=value: p[a] > v
                 else:
                     raise ValueError(pred)
                 rule = {"func": func, "dest": dest}
@@ -95,8 +76,6 @@ def process(part, workflows):
 
 def main(filename):
     workflows, parts = read(filename)
-    print(workflows)
-    print(parts)
 
     total = 0
     for part in parts:
