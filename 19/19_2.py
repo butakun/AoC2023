@@ -4,21 +4,6 @@ import numpy as np
 from copy import deepcopy
 
 
-class Func:
-    def __init__(self, a, p, v):
-        self.attr = a
-        self.pred = p
-        self.value = v
-    def __call__(self, x):
-        logging.debug(f"FUNC: {self.attr} {self.pred} {self.value}? {x[self.attr]}")
-        if self.pred == "<":
-            return x[self.attr] < self.value
-        elif self.pred == ">":
-            return x[self.attr] > self.value
-        else:
-            assert False
-
-
 def read(filename):
     workflows = {}
     f = open(filename)
