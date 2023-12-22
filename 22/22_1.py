@@ -64,8 +64,8 @@ def main(filename):
 
     # build supports tree and supportedby tree
     removed = set()
-    supports = defaultdict(list)
-    supported = defaultdict(list)
+    supports = dict()
+    supported = defaultdict(set)
     for bid in range(1, len(bricks)+1):
         brick = bricks[bid - 1]
         xmin, ymin, _ = brick.min(axis=0)
@@ -82,7 +82,7 @@ def main(filename):
         print(f"  {rests} are on top")
         supports[bid] = rests
         for ab in rests:
-            supported[ab].append(bid)
+            supported[ab].add(bid)
 
     print(supports)
     print(supported)
