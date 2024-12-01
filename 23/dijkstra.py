@@ -4,6 +4,9 @@ import heapq
 from collections import defaultdict, deque
 import itertools
 
+logger = logging.getLogger(__name__)
+
+
 class PriorityQueue(object):
     
     def __init__(self):
@@ -70,7 +73,7 @@ def dijkstra(G, src, f_is_goal, debug_freq=-1, vis_logger=None):
 
         if debug_freq > 0:
             if iter % debug_freq == 0:
-                logging.debug(f"iter {iter}: u = {u[:2]}, D[u] = {D[u]}, len(pq) = {len(pq)}")
+                logger.debug(f"iter {iter}: u = {u[:2]}, D[u] = {D[u]}, len(pq) = {len(pq)}, {best_distance=}")
         if vis_logger:
             vis_logger.inspecting(iter, u)
 
@@ -79,7 +82,7 @@ def dijkstra(G, src, f_is_goal, debug_freq=-1, vis_logger=None):
             if d < best_distance:
                 best_distance = d
                 best = u
-            logging.debug(f"reached dest {u[0]}, {u[1]} at D = {d}")
+                logger.debug(f"found best so far: {u[0]}, {u[1]} at D = {d}")
         for v in G[u]:
             if isinstance(v, tuple):
                 v, weight = v
@@ -93,6 +96,7 @@ def dijkstra(G, src, f_is_goal, debug_freq=-1, vis_logger=None):
                 if vis_logger:
                     vis_logger.found_better(iter, v, came_from, dist_v)
 
+    logger.debug(f"{best_distance=}")
     path = backtrack(best, came_from)
     return path, best_distance
 
